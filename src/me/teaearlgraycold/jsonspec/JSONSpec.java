@@ -32,6 +32,9 @@ public class JSONSpec {
         try {
             Object jsonSpec = parser.parse(spec);
 
+            if (!jsonSpec.getClass().equals(testObject.getClass()))
+                throw new JSONFormatException("Expected root value to be of type " + jsonSpec.getClass().getName());
+
             if (jsonSpec instanceof JSONObject)
                 objectTypeCheck((JSONObject) jsonSpec, (JSONObject) testObject, "");
             else if (jsonSpec instanceof JSONArray)

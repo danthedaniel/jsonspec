@@ -48,4 +48,16 @@ class JSONSpecTest {
         });
         assertEquals("Expected value at foo.bar to be of type class org.json.simple.JSONObject", exception.getMessage());
     }
+
+    @Test
+    void testDifferentTopLevelType() throws ParseException, JSONFormatException {
+        Throwable exception = assertThrows(JSONFormatException.class, () ->
+        {
+            String spec = "[]";
+            String jsonString = "{}";
+            JSONObject json = (JSONObject) new JSONParser().parse(jsonString);
+            JSONSpec.testObject(spec, json);
+        });
+        assertEquals("Expected root value to be of type org.json.simple.JSONArray", exception.getMessage());
+    }
 }
