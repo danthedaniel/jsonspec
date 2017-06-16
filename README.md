@@ -1,7 +1,7 @@
 jsonspec
 ===
 
-JSON structure checking for org.json.simple
+JSON structure checking for [org.json.simple](https://github.com/fangyidong/json-simple).
 
 ### Usage
 
