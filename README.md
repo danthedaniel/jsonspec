@@ -30,7 +30,8 @@ e.g.:
       "bar": 0
     }
   ]
-}```
+}
+```
 
 The above specifies that there should be a key named `foobar` that
 corresponds to a string, and a key named `foo` that corresponds to an
