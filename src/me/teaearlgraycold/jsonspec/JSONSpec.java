@@ -35,10 +35,7 @@ public class JSONSpec {
             if (!jsonSpec.getClass().equals(testObject.getClass()))
                 throw new JSONFormatException("Expected root value to be of type " + jsonSpec.getClass().getName());
 
-            if (jsonSpec instanceof JSONObject)
-                objectTypeCheck((JSONObject) jsonSpec, (JSONObject) testObject, "");
-            else if (jsonSpec instanceof JSONArray)
-                arrayTypeCheck((JSONArray) jsonSpec, (JSONArray) testObject, "");
+            recurseIntoObject(jsonSpec, testObject, "");
         } catch (ParseException e) {
             System.err.println("JSON spec string is not valid JSON. No tests will be performed on the provided object.");
         }
@@ -60,10 +57,8 @@ public class JSONSpec {
                 throw new JSONFormatException("Expected object to contain key " + newPath);
             } else if (!typesForKeyEqual(key, reference, testObj)) {
                 throw new JSONFormatException("Expected value at " + newPath + " to be of type " + reference.get(key).getClass().toString());
-            } else if (reference.get(key) instanceof JSONArray) {
-                arrayTypeCheck((JSONArray) reference.get(key), (JSONArray) testObj.get(key), newPath);
-            } else if (reference.get(key) instanceof JSONObject) {
-                objectTypeCheck((JSONObject) reference.get(key), (JSONObject) testObj.get(key), newPath);
+            } else {
+                recurseIntoObject(reference.get(key), testObj.get(key), newPath);
             }
         }
     }
@@ -96,11 +91,24 @@ public class JSONSpec {
 
             if (!testElement.getClass().equals(referenceClass)) {
                 throw new JSONFormatException("Expected value at " + newPath + " to be of type " + referenceClass.toString());
-            } else if (referenceElement instanceof JSONObject) {
-                objectTypeCheck((JSONObject) referenceElement, (JSONObject) testElement, newPath);
-            } else if (referenceElement instanceof JSONArray) {
-                arrayTypeCheck((JSONArray) referenceElement, (JSONArray) testElement, newPath);
+            } else {
+                recurseIntoObject(referenceElement, testElement, newPath);
             }
+        }
+    }
+
+    /**
+     * Recurse into an object as either a JSONObject or a JSONArray
+     * @param referenceElement Object that defines the structure expected of the tested object.
+     * @param testElement Object being tested.
+     * @param path Current path in the tested object.
+     * @throws JSONFormatException If the tested object does not conform to the structure of the reference object.
+     */
+    private static void recurseIntoObject(Object referenceElement, Object testElement, String path) throws JSONFormatException {
+        if (referenceElement instanceof JSONObject) {
+            objectTypeCheck((JSONObject) referenceElement, (JSONObject) testElement, path);
+        } else if (referenceElement instanceof JSONArray) {
+            arrayTypeCheck((JSONArray) referenceElement, (JSONArray) testElement, path);
         }
     }
 
